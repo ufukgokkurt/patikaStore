@@ -5,22 +5,31 @@
  * @format
  */
 
-import { FlatList, SafeAreaView, StyleSheet, Text, TextInput } from 'react-native';
-
-import product_data from './src/product_data.json';
-import ProductCard from './src/components/ProductCard';
+import { SafeAreaView, StyleSheet } from 'react-native';
+import ListTodo from './src/components/ListTodo';
+ import AddTodo from './src/components/AddTodo';
+import { useState } from 'react';
+import { Todo } from './src/Types';
 
 function App() {
+ 
+  const [todoList, setTodoList] = useState<Todo[]>([]);
+
+  const addTodo = (todo:Todo) => {
+    setTodoList([...todoList, todo]);
+  };
+const toggleTodo = (id: number) => {
+    setTodoList(prev =>
+      prev.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>PATIKASTORE</Text>
-      <TextInput placeholder='Ara...' style={styles.searchInput}/>
-      <FlatList
-        data={product_data}
-        renderItem={({ item }) => <ProductCard product={item} />}
-        numColumns={2} // 2 sütunlu görünüm
-        keyExtractor={(item, index) => item.id?.toString() || index.toString()}
-      />
+      <ListTodo todoList={todoList} onToggle={toggleTodo}/>
+      <AddTodo addTodo={addTodo}/>
     </SafeAreaView>
   );
 }
@@ -28,21 +37,10 @@ function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#102027',
    },
-  title: {
-    fontSize: 44,
-    color: '#800080',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 20,
-  },
-  searchInput: {
-    height: 40,
-    backgroundColor: '#edeff1',
-     borderRadius: 8,
-    paddingHorizontal: 10,
-    marginHorizontal: 20,
-    marginBottom: 20}
+  
+ 
 });
 
 export default App;
